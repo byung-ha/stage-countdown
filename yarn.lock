@@ -1275,6 +1275,13 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
+vite-plugin-singlefile@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/vite-plugin-singlefile/-/vite-plugin-singlefile-2.1.0.tgz#b22da5b005da05fd2742a3145e70c9a4ef7b5960"
+  integrity sha512-7tJo+UgZABlKpY/nubth/wxJ4+pUGREPnEwNOknxwl2MM0zTvF14KTU4Ln1lc140gjLLV5mjDrvuoquU7OZqCg==
+  dependencies:
+    micromatch "^4.0.8"
+
 vite@^6.0.5:
   version "6.0.11"
   resolved "https://registry.yarnpkg.com/vite/-/vite-6.0.11.tgz#224497e93e940b34c3357c9ebf2ec20803091ed8"
