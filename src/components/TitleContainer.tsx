@@ -12,7 +12,15 @@ function TitleContainer({size, initTitle}: Readonly<TitleContainerProps>) {
   }, [initTitle]);
   return (
       <div>
-        <div style={{width: '100vw', fontSize: `${size}em`, textWrap: 'nowrap'}}>{title || <>&nbsp;</>}</div>
+        <input style={{
+          fontSize: `${size}em`,
+          width: '100%',
+          textAlign: 'center',
+          color: 'white',
+          backgroundColor: 'black',
+          border: 'none'
+        }} type='text' value={title}
+               onInput={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}/>
       </div>
   );
 }

@@ -1,5 +1,5 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, Roboto, sans-serif;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -18,4 +18,27 @@ body {
   place-items: center;
   min-width: 100vw;
   min-height: 100vh;
+
+  font-family: Roboto, sans-serif;
+  font-weight: 500;
+  color: white;
+  background-color: black;
+
+  overflow: hidden;
+}
+
+.control {
+  text-align: center;
+  line-height: 40px;
+  height: 40px;
+  margin-bottom: 20px;
+  padding: 0 40px;
+  color: #444;
+  font-size: 14px;
+}
+.control input, .control button {
+  color: #444;
+  background-color: black;
+  border: 1px solid #444;
+  border-radius: 2px;
 }

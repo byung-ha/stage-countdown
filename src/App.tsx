@@ -26,11 +26,10 @@ function App() {
         <div>
           <TitleContainer initTitle={title} size={titleSize}/>
         </div>
-        <hr style={{color:'grey'}}/>
         <div className="control">
-          <input type='number' style={{width:'3em'}} value={minutes} size={2} onInput={(e:React.ChangeEvent<HTMLInputElement>) => setMinutes(parseInt(e.target.value)??0)}/>
+          <input type='number' style={{width:'3em'}} value={minutes} size={2} min={0}  onInput={(e:React.ChangeEvent<HTMLInputElement>) => setMinutes(parseInt(e.target.value)??0)}/>
           <span>&nbsp;:&nbsp;</span>
-          <input type='number' style={{width:'3em'}} value={seconds} size={2} onInput={(e:React.ChangeEvent<HTMLInputElement>) => setSeconds(parseInt(e.target.value)??0)}/>
+          <input type='number' style={{width:'3em'}} value={seconds} size={2} min={0} max={59} onInput={(e:React.ChangeEvent<HTMLInputElement>) => setSeconds(parseInt(e.target.value)??0)}/>
           <button onClick={resetCountdown}>Start</button>&nbsp;
           <input type='checkbox' checked={overtime} onChange={e => setOvertime(e.target.checked)}/>overtime&nbsp;
           <input type='text' value={title} onInput={(e:React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}/>&nbsp;
