@@ -14,10 +14,6 @@
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 100vw;
-  min-height: 100vh;
 
   font-family: Roboto, sans-serif;
   font-weight: 500;
@@ -28,14 +24,22 @@ body {
 }
 
 .control {
+  position: fixed;
+  bottom: 0;
   text-align: center;
-  line-height: 40px;
-  height: 40px;
   margin-bottom: 20px;
-  padding: 0 40px;
   color: #444;
   font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
+
+.control input {
+  margin: 0 5px;
+}
+
 .control input, .control button {
   color: #444;
   background-color: black;

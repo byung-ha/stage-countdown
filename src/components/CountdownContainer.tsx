@@ -6,10 +6,11 @@ interface CountdownProps {
   ms: number,
   size?: number,
   overtime?: boolean
+  autoStart?: boolean
 }
 
-function CountdownContainer({ms, size, overtime}: Readonly<CountdownProps>) {
-  const adjustMs = 1000
+function CountdownContainer({ms, size, overtime, autoStart=false}: Readonly<CountdownProps>) {
+  const adjustMs = 1000;
   const [date, setDate] = useState(Date.now() + ms + adjustMs);
   useEffect(() => {
     if (ms > 0)
@@ -24,7 +25,7 @@ function CountdownContainer({ms, size, overtime}: Readonly<CountdownProps>) {
   };
 
   return <div style={{fontSize: `${size}em`, fontFamily: 'Roboto, sans-serif', fontWeight: 500}}>
-    <Countdown date={date} renderer={renderer} precision={100} intervalDelay={10} overtime={overtime}/>
+    <Countdown date={date} renderer={renderer} precision={100} intervalDelay={10} overtime={overtime} autoStart={autoStart}/>
   </div>;
 }
 
