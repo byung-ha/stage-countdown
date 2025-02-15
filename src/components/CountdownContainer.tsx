@@ -1,5 +1,6 @@
 import Countdown, {zeroPad} from "react-countdown";
 import {CountdownRendererFn} from "react-countdown/dist/Countdown";
+import {useState} from "react";
 
 interface CountdownProps {
   ms: number,
@@ -11,7 +12,7 @@ interface CountdownProps {
 const adjustMs = 999;
 
 function CountdownContainer({ms, size, overtime, autoStart=false}: Readonly<CountdownProps>) {
-  const date = Date.now() + ms + adjustMs
+  const [date] = useState(Date.now() + ms + adjustMs)
   const renderer: CountdownRendererFn = ({minutes, seconds, completed}) => {
     if (completed && !(minutes === 0 && seconds === 0)) {
       return <span style={{color: 'red'}}>-{zeroPad(minutes)}:{zeroPad(seconds)}</span>;
