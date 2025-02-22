@@ -1,18 +1,26 @@
 import Countdown, {zeroPad} from "react-countdown";
 import {CountdownRendererFn} from "react-countdown/dist/Countdown";
-import {useState} from "react";
+import {useContext, useEffect, useState} from "react";
+import {generalContext} from "../GeneralContext.tsx";
 
-interface CountdownProps {
-  ms: number,
-  size?: number,
-  overtime?: boolean
-  autoStart?: boolean
-}
 
 const adjustMs = 999;
 
-function CountdownContainer({ms, size, overtime, autoStart=false}: Readonly<CountdownProps>) {
-  const [date] = useState(Date.now() + ms + adjustMs)
+function CountdownContainer() {
+  const {countMs, countdownSize, showMinusTime} = useContext(generalContext)
+  const [date, setDate] = useState(Date.now() + countMs + adjustMs)
+  const [key, setKey] = useState(Math.random())
+  const [enableAutoStart, setEnableAutoStart] = useState(false)
+  useEffect(() => {
+    setKey(Math.random())
+    if (countMs !== 0) {
+      setEnableAutoStart(true)
+      setDate(Date.now() + countMs + adjustMs)
+    } else {
+      setEnableAutoStart(false)
+      setDate(Date.now())
+    }
+  }, [countMs])
   const renderer: CountdownRendererFn = ({minutes, seconds, completed}) => {
     if (completed && !(minutes === 0 && seconds === 0)) {
       return <span style={{color: 'red'}}>-{zeroPad(minutes)}:{zeroPad(seconds)}</span>;
@@ -21,8 +29,9 @@ function CountdownContainer({ms, size, overtime, autoStart=false}: Readonly<Coun
     }
   };
 
-  return <div style={{fontSize: `${size}em`, fontFamily: 'Roboto, sans-serif', fontWeight: 500}}>
-    <Countdown date={date} renderer={renderer} precision={100} intervalDelay={10} overtime={overtime} autoStart={autoStart}/>
+  return <div style={{fontSize: `${countdownSize}em`}}>
+    <Countdown key={key} date={date} renderer={renderer} precision={100} intervalDelay={10} overtime={showMinusTime}
+               autoStart={enableAutoStart}/>
   </div>;
 }
 

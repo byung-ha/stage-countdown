@@ -1,27 +1,15 @@
-import {useEffect, useState} from "react";
+import {useContext} from "react";
+import {generalContext} from "../GeneralContext.tsx";
 
-interface TitleContainerProps {
-  size?: number,
-  initTitle?: string
-}
-
-function TitleContainer({size, initTitle}: Readonly<TitleContainerProps>) {
-  const [title, setTitle] = useState(initTitle);
-  useEffect(() => {
-    setTitle(initTitle);
-  }, [initTitle]);
+function TitleContainer() {
+  const {title, setTitle, titleSize} = useContext(generalContext)
   return (
-      <div>
-        <input style={{
-          fontSize: `${size}em`,
-          width: '100%',
-          textAlign: 'center',
-          color: 'white',
-          backgroundColor: 'black',
-          border: 'none'
-        }} type='text' value={title}
-               onInput={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}/>
-      </div>
+    <div>
+      <input className="title-input" style={{
+        fontSize: `${titleSize}em`
+      }} type='text' value={title}
+             onInput={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}/>
+    </div>
   );
 }
 
