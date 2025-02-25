@@ -68,7 +68,7 @@ const GeneralContextProvider = ({children}: { children: React.ReactNode }) => {
   const [queueDialog, setQueueDialog] = useState(false)
   const queueFromLocalstorage = JSON.parse(localStorage.getItem('queue') ?? JSON.stringify([emptyElement])) as QueueItem[];
   const [queue, setQueue] = useState<QueueItem[]>(queueFromLocalstorage)
-  const [nextQueueIndex, setnextQueueIndex] = useState(0)
+  const [nextQueueIndex, setnextQueueIndex] = useState(1)
   const [enableAutoStart, setEnableAutoStart] = useState(false)
   const [autoStartTime, setAutoStartTime] = useState<string>()
   const [autoStartTimeout, setAutoStartTimeout] = useState<number>(0)

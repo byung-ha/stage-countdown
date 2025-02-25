@@ -63,16 +63,16 @@ function ControllerContainer() {
         <button onClick={() => setQueueDialog(!queueDialog)}>Queue {queueDialog ? <MdOutlineExpandMore/> :
           <MdOutlineExpandLess/>}</button>
         <div>nextQueue:
-          <input type='number' min='0' max={queue.length} value={nextQueueIndex}
+          <input type='number' min='1' max={queue.length+1} value={nextQueueIndex}
                  onInput={(e: React.ChangeEvent<HTMLInputElement>) => setnextQueueIndex(parseInt(e.target.value) ?? 0)}/>
           <button onClick={() => {
-            if (queue.length <= nextQueueIndex) return
-            setCountMs(queue[nextQueueIndex].minutes * 60000 + queue[nextQueueIndex].seconds * 1000)
-            setTitle(queue[nextQueueIndex].title)
-            setnextQueueIndex(nextQueueIndex + 1)
+            if (queue.length < nextQueueIndex) return
+            setCountMs(queue[nextQueueIndex-1].minutes * 60000 + queue[nextQueueIndex-1].seconds * 1000)
+            setTitle(queue[nextQueueIndex-1].title)
+            setnextQueueIndex(nextQueueIndex+1)
           }} style={{marginRight: '6px', width: '80px'}}>next
           </button>
-          {nextQueueIndex < queue.length ? queue[nextQueueIndex]?.title : 'finished'}
+          {nextQueueIndex <= queue.length ? queue[nextQueueIndex-1]?.title : 'finished'}
         </div>
 
       </div>

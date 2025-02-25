@@ -17,7 +17,7 @@ function QueueDialog() {
       <div className="queue_content">
         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1em'}}>
           <h1>Queue</h1>
-          <button onClick={() => setQueue([...queue, emptyElement])}>
+          <button onClick={() => setQueue([...queue, {...emptyElement}])}>
             <MdAdd/>
           </button>
         </div>
