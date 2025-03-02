@@ -50,13 +50,13 @@ function QueueDialog() {
                          setQueue([...queue])
                        }}/></td>
               <td>
-                <input type='number' value={item.minutes}
+                <input type='number' value={item.minutes} min={0} max={59}
                        onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
                          queue[index].minutes = parseInt(e.target.value) ?? 0
                          setQueue([...queue])
                        }}/></td>
               <td>
-                <input type='number' value={item.seconds}
+                <input type='number' value={item.seconds} min={0} max={59}
                        onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
                          queue[index].seconds = parseInt(e.target.value) ?? 0
                          setQueue([...queue])
