@@ -21,11 +21,11 @@ function CountdownContainer() {
       setDate(Date.now())
     }
   }, [countMs])
-  const renderer: CountdownRendererFn = ({minutes, seconds, completed}) => {
+  const renderer: CountdownRendererFn = ({hours, minutes, seconds, completed}) => {
     if (completed && !(minutes === 0 && seconds === 0)) {
       return <span style={{color: 'red'}}>-{zeroPad(minutes)}:{zeroPad(seconds)}</span>;
     } else {
-      return <span>{zeroPad(minutes)}:{zeroPad(seconds)}</span>;
+      return <span>{hours > 0 && hours + ':'}{zeroPad(minutes)}:{zeroPad(seconds)}</span>;
     }
   };
 
