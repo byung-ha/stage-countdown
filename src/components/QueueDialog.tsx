@@ -1,6 +1,7 @@
 import {emptyElement, generalContext} from "../GeneralContext.tsx";
-import {MdAdd, MdDeleteForever} from "react-icons/md";
+import {MdAdd} from "react-icons/md";
 import {useContext} from "react";
+import {Container} from "./Container.tsx";
 
 function QueueDialog() {
   const {
@@ -38,36 +39,7 @@ function QueueDialog() {
           </tr>
           </thead>
           <tbody>
-          {queue.map((item, index) =>
-            <tr key={index}>
-              <td>
-                {index + 1}
-              </td>
-              <td>
-                <input type='text' value={item.title}
-                       onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
-                         queue[index].title = e.target.value
-                         setQueue([...queue])
-                       }}/></td>
-              <td>
-                <input type='number' value={item.minutes} min={0} max={59}
-                       onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
-                         queue[index].minutes = parseInt(e.target.value) ?? 0
-                         setQueue([...queue])
-                       }}/></td>
-              <td>
-                <input type='number' value={item.seconds} min={0} max={59}
-                       onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
-                         queue[index].seconds = parseInt(e.target.value) ?? 0
-                         setQueue([...queue])
-                       }}/></td>
-              <td>
-                <button onClick={() => setQueue(queue.filter((_, i) => i !== index))}>
-                  <MdDeleteForever/>
-                </button>
-              </td>
-            </tr>
-          )}
+          <Container/>
           </tbody>
         </table>
       </div>

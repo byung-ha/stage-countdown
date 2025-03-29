@@ -1,4 +1,4 @@
-import {createContext, useEffect, useState} from "react";
+import {createContext, Dispatch, SetStateAction, useEffect, useState} from "react";
 
 export type GeneralContent = {
   countMs: number,
@@ -17,8 +17,8 @@ export type GeneralContent = {
   setShowMinusTime: (value: boolean) => void,
   queueDialog: boolean,
   setQueueDialog: (value: boolean) => void,
-  queue: QueueItem[],
-  setQueue: (value: QueueItem[]) => void,
+  queue: QueueItemType[],
+  setQueue: Dispatch<SetStateAction<QueueItemType[]>>,
   nextQueueIndex: number,
   setnextQueueIndex: (value: number) => void,
   enableAutoStart: boolean,
@@ -29,7 +29,8 @@ export type GeneralContent = {
   setAutoStartTimeout: (value: number) => void,
 }
 
-export type QueueItem = {
+export type QueueItemType = {
+  id: number,
   title: string,
   minutes: number,
   seconds: number
@@ -38,7 +39,7 @@ export type QueueItem = {
 const defaultValue = {};
 export const generalContext = createContext<GeneralContent>(defaultValue as GeneralContent);
 
-export const emptyElement: QueueItem = {title: '', minutes: 0, seconds: 0};
+export const emptyElement: QueueItemType = {id:1, title: '', minutes: 0, seconds: 0};
 
 const defaultValues = {
   minutes: 1,
@@ -66,8 +67,8 @@ const GeneralContextProvider = ({children}: { children: React.ReactNode }) => {
   const [seconds, setSeconds] = useState(defaultValues.seconds)
   const [showMinusTime, setShowMinusTime] = useState(localStorage.getItem('showMinusTime') === 'true')
   const [queueDialog, setQueueDialog] = useState(false)
-  const queueFromLocalstorage = JSON.parse(localStorage.getItem('queue') ?? JSON.stringify([emptyElement])) as QueueItem[];
-  const [queue, setQueue] = useState<QueueItem[]>(queueFromLocalstorage)
+  const queueFromLocalstorage = JSON.parse(localStorage.getItem('queue') ?? JSON.stringify([emptyElement])) as QueueItemType[];
+  const [queue, setQueue] = useState<QueueItemType[]>(queueFromLocalstorage)
   const [nextQueueIndex, setnextQueueIndex] = useState(1)
   const [enableAutoStart, setEnableAutoStart] = useState(false)
   const [autoStartTime, setAutoStartTime] = useState<string>()
