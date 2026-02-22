@@ -783,6 +783,39 @@ function App() {
     setNowMs(nowMsValue)
   }
 
+  const handleQueuePanelToggle = () => {
+    if (isQueuePanelOpen) {
+      setIsQueuePanelOpen(false)
+      return
+    }
+
+    setIsQueuePanelOpen(true)
+    setIsTimerPanelOpen(false)
+    setIsConfigOpen(false)
+  }
+
+  const handleTimerPanelToggle = () => {
+    if (isTimerPanelOpen) {
+      setIsTimerPanelOpen(false)
+      return
+    }
+
+    setIsTimerPanelOpen(true)
+    setIsQueuePanelOpen(false)
+    setIsConfigOpen(false)
+  }
+
+  const handleConfigPanelToggle = () => {
+    if (isConfigOpen) {
+      setIsConfigOpen(false)
+      return
+    }
+
+    setIsConfigOpen(true)
+    setIsQueuePanelOpen(false)
+    setIsTimerPanelOpen(false)
+  }
+
   const selectedFont = FONT_OPTIONS.find((option) => option.value === font) ?? FONT_OPTIONS[0]
 
   return (
@@ -790,7 +823,7 @@ function App() {
       <aside className={`queue-panel ${isQueuePanelOpen ? 'queue-panel--open' : 'queue-panel--closed'}`}>
         <button
           className="queue-toggle"
-          onClick={() => setIsQueuePanelOpen((open) => !open)}
+          onClick={handleQueuePanelToggle}
           type="button"
           aria-expanded={isQueuePanelOpen}
           aria-controls="queue-panel-content"
@@ -898,7 +931,7 @@ function App() {
       <aside className={`timer-panel ${isTimerPanelOpen ? 'timer-panel--open' : 'timer-panel--closed'}`}>
         <button
           className="timer-toggle"
-          onClick={() => setIsTimerPanelOpen((open) => !open)}
+          onClick={handleTimerPanelToggle}
           type="button"
           aria-expanded={isTimerPanelOpen}
           aria-controls="timer-panel-content"
@@ -1098,7 +1131,7 @@ function App() {
       <aside className={`config-panel ${isConfigOpen ? 'config-panel--open' : 'config-panel--closed'}`}>
         <button
           className="config-toggle"
-          onClick={() => setIsConfigOpen((open) => !open)}
+          onClick={handleConfigPanelToggle}
           type="button"
           aria-expanded={isConfigOpen}
           aria-controls="config-panel-content"
