@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import './App.css'
 
 const DEFAULT_MINUTES = 10
@@ -8,6 +8,10 @@ const DEFAULT_TITLE = 'title'
 const DEFAULT_QUEUE_ITEM_TITLE = 'Queue Item'
 const DEFAULT_TIMER_ITEM_TITLE = 'CB1'
 const MAX_TITLE_LENGTH = 40
+const MIN_FONT_SIZE = 20
+const MAX_FONT_SIZE = 800
+const MIN_CONTROL_PANEL_SCALE = 50
+const MAX_CONTROL_PANEL_SCALE = 200
 const SETTINGS_STORAGE_KEY = 'stage-countdown.settings.v1'
 const QUEUE_STORAGE_KEY = 'stage-countdown.queue.v1'
 const TIMER_STORAGE_KEY = 'stage-countdown.timer.v1'
@@ -46,34 +50,40 @@ type TimerItem = {
 
 type PersistedSettings = {
   allowNegativeTime: boolean
+  boldText: boolean
   contentGap: number
   contentMarginBottom: number
   contentMarginLeft: number
   contentMarginRight: number
   contentMarginTop: number
+  controlPanelScale: number
   configuredMinutes: number
   configuredSeconds: number
   contentAlign: AlignOptionValue
   controlsAlign: ControlAlignOptionValue
   font: FontOptionValue
   timeFontSize: number
+  titleAboveTimer: boolean
   titleFontSize: number
   titleText: string
 }
 
 const DEFAULT_SETTINGS: PersistedSettings = {
   allowNegativeTime: true,
+  boldText: true,
   contentGap: 16,
   contentMarginBottom: 0,
   contentMarginLeft: 0,
   contentMarginRight: 0,
   contentMarginTop: 0,
+  controlPanelScale: 100,
   configuredMinutes: DEFAULT_MINUTES,
   configuredSeconds: DEFAULT_SECONDS,
   contentAlign: 'center',
   controlsAlign: 'top',
   font: 'system',
   timeFontSize: 180,
+  titleAboveTimer: false,
   titleFontSize: 80,
   titleText: DEFAULT_TITLE,
 }
@@ -226,6 +236,7 @@ function readStoredSettings(): PersistedSettings {
     return {
       allowNegativeTime:
         typeof parsed.allowNegativeTime === 'boolean' ? parsed.allowNegativeTime : DEFAULT_SETTINGS.allowNegativeTime,
+      boldText: typeof parsed.boldText === 'boolean' ? parsed.boldText : DEFAULT_SETTINGS.boldText,
       contentGap: typeof parsed.contentGap === 'number' ? clamp(parsed.contentGap, 0, 300) : DEFAULT_SETTINGS.contentGap,
       contentMarginBottom:
         typeof parsed.contentMarginBottom === 'number'
@@ -243,6 +254,10 @@ function readStoredSettings(): PersistedSettings {
         typeof parsed.contentMarginTop === 'number'
           ? clamp(parsed.contentMarginTop, 0, 500)
           : DEFAULT_SETTINGS.contentMarginTop,
+      controlPanelScale:
+        typeof parsed.controlPanelScale === 'number'
+          ? clamp(parsed.controlPanelScale, MIN_CONTROL_PANEL_SCALE, MAX_CONTROL_PANEL_SCALE)
+          : DEFAULT_SETTINGS.controlPanelScale,
       configuredMinutes:
         typeof parsed.configuredMinutes === 'number'
           ? clamp(parsed.configuredMinutes, 0, 999)
@@ -257,10 +272,14 @@ function readStoredSettings(): PersistedSettings {
         : DEFAULT_SETTINGS.controlsAlign,
       font: isFontOptionValue(parsed.font) ? parsed.font : DEFAULT_SETTINGS.font,
       timeFontSize:
-        typeof parsed.timeFontSize === 'number' ? clamp(parsed.timeFontSize, 72, 320) : DEFAULT_SETTINGS.timeFontSize,
+        typeof parsed.timeFontSize === 'number'
+          ? clamp(parsed.timeFontSize, MIN_FONT_SIZE, MAX_FONT_SIZE)
+          : DEFAULT_SETTINGS.timeFontSize,
+      titleAboveTimer:
+        typeof parsed.titleAboveTimer === 'boolean' ? parsed.titleAboveTimer : DEFAULT_SETTINGS.titleAboveTimer,
       titleFontSize:
         typeof parsed.titleFontSize === 'number'
-          ? clamp(parsed.titleFontSize, 72, 320)
+          ? clamp(parsed.titleFontSize, MIN_FONT_SIZE, MAX_FONT_SIZE)
           : DEFAULT_SETTINGS.titleFontSize,
       titleText:
         typeof parsed.titleText === 'string'
@@ -370,11 +389,75 @@ function createQueueItemId(): string {
   return `queue-${Date.now()}-${Math.random().toString(16).slice(2)}`
 }
 
+function StartIcon() {
+  return (
+    <svg className="control-button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M4.5 5.65257C4.5 4.22644 6.029 3.32239 7.2786 4.00967L18.8192 10.357C20.1144 11.0694 20.1144 12.9304 18.8192 13.6428L7.2786 19.9901C6.029 20.6774 4.5 19.7733 4.5 18.3472V5.65257Z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+}
+
 function ResumeIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <rect x="2.5" y="3" width="4.5" height="18" rx="2.2" fill="currentColor" />
-      <path d="M9.5 3.5L21 12L9.5 20.5V3.5Z" fill="currentColor" />
+    <svg className="control-button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        d="M184.49,136.49l-80,80a12,12,0,0,1-17-17L159,128,87.51,56.49a12,12,0,1,1,17-17l80,80A12,12,0,0,1,184.49,136.49Z"
+        fill="currentColor"
+        transform="scale(0.09375)"
+      />
+    </svg>
+  )
+}
+
+function PauseIcon() {
+  return (
+    <svg className="control-button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M6.75 5.25C6.75 4.83579 7.08579 4.5 7.5 4.5H9C9.41421 4.5 9.75 4.83579 9.75 5.25V18.75C9.75 19.1642 9.41421 19.5 9 19.5H7.5C7.30109 19.5 7.11032 19.421 6.96967 19.2803C6.82902 19.1397 6.75 18.9489 6.75 18.75L6.75 5.25ZM14.25 5.25C14.25 4.83579 14.5858 4.5 15 4.5H16.5C16.6989 4.5 16.8897 4.57902 17.0303 4.71967C17.171 4.86032 17.25 5.05109 17.25 5.25V18.75C17.25 19.1642 16.9142 19.5 16.5 19.5H15C14.5858 19.5 14.25 19.1642 14.25 18.75V5.25Z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+}
+
+function StopIcon() {
+  return (
+    <svg className="control-button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M4.5 7.5C4.5 5.84315 5.84315 4.5 7.5 4.5H16.5C18.1569 4.5 19.5 5.84315 19.5 7.5V16.5C19.5 18.1569 18.1569 19.5 16.5 19.5H7.5C5.84315 19.5 4.5 18.1569 4.5 16.5V7.5Z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+}
+
+function PreviousIcon() {
+  return (
+    <svg className="control-button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        d="M9.19475 18.4394C10.4447 19.1536 12 18.2511 12 16.8114V14.4709L18.9447 18.4394C20.1947 19.1536 21.75 18.2511 21.75 16.8114L21.75 8.68856C21.75 7.24889 20.1947 6.34633 18.9447 7.06061L12 11.029V8.68856C12 7.24889 10.4447 6.34633 9.19475 7.06061L2.08726 11.122C0.827605 11.8418 0.827603 13.6581 2.08726 14.3779L9.19475 18.4394Z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+}
+
+function NextIcon() {
+  return (
+    <svg className="control-button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        d="M5.05526 7.06061C3.80528 6.34633 2.25 7.24889 2.25 8.68856V16.8114C2.25 18.2511 3.80528 19.1536 5.05526 18.4394L12 14.4709V16.8114C12 18.2511 13.5553 19.1536 14.8053 18.4394L21.9128 14.3779C23.1724 13.6581 23.1724 11.8418 21.9128 11.122L14.8053 7.06061C13.5553 6.34633 12 7.24889 12 8.68856V11.029L5.05526 7.06061Z"
+        fill="currentColor"
+      />
     </svg>
   )
 }
@@ -394,6 +477,7 @@ function App() {
   const [contentMarginBottom, setContentMarginBottom] = useState<number>(storedSettings.contentMarginBottom)
   const [contentMarginLeft, setContentMarginLeft] = useState<number>(storedSettings.contentMarginLeft)
   const [contentMarginRight, setContentMarginRight] = useState<number>(storedSettings.contentMarginRight)
+  const [controlPanelScale, setControlPanelScale] = useState<number>(storedSettings.controlPanelScale)
   const [durationSeconds, setDurationSeconds] = useState<number>(
     storedSettings.configuredMinutes * 60 + storedSettings.configuredSeconds,
   )
@@ -406,8 +490,10 @@ function App() {
   const [nextQueueIndexInput, setNextQueueIndexInput] = useState<number>(1)
   const [timeFontSize, setTimeFontSize] = useState<number>(storedSettings.timeFontSize)
   const [titleFontSize, setTitleFontSize] = useState<number>(storedSettings.titleFontSize)
+  const [titleAboveTimer, setTitleAboveTimer] = useState<boolean>(storedSettings.titleAboveTimer)
   const [titleText, setTitleText] = useState<string>(storedSettings.titleText)
   const [font, setFont] = useState<FontOptionValue>(storedSettings.font)
+  const [boldText, setBoldText] = useState<boolean>(storedSettings.boldText)
   const [contentAlign, setContentAlign] = useState<AlignOptionValue>(storedSettings.contentAlign)
   const [controlsAlign, setControlsAlign] = useState<ControlAlignOptionValue>(storedSettings.controlsAlign)
   const [allowNegativeTime, setAllowNegativeTime] = useState<boolean>(storedSettings.allowNegativeTime)
@@ -451,17 +537,20 @@ function App() {
 
     const nextSettings: PersistedSettings = {
       allowNegativeTime,
+      boldText,
       contentGap,
       contentMarginBottom,
       contentMarginLeft,
       contentMarginRight,
       contentMarginTop,
+      controlPanelScale,
       configuredMinutes,
       configuredSeconds,
       contentAlign,
       controlsAlign,
       font,
       timeFontSize,
+      titleAboveTimer,
       titleFontSize,
       titleText: titleText.slice(0, MAX_TITLE_LENGTH),
     }
@@ -469,17 +558,20 @@ function App() {
     window.localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(nextSettings))
   }, [
     allowNegativeTime,
+    boldText,
     contentGap,
     contentMarginBottom,
     contentMarginLeft,
     contentMarginRight,
     contentMarginTop,
+    controlPanelScale,
     configuredMinutes,
     configuredSeconds,
     contentAlign,
     controlsAlign,
     font,
     timeFontSize,
+    titleAboveTimer,
     titleFontSize,
     titleText,
   ])
@@ -817,6 +909,27 @@ function App() {
   }
 
   const selectedFont = FONT_OPTIONS.find((option) => option.value === font) ?? FONT_OPTIONS[0]
+  const timeFontWeight = boldText ? 700 : 400
+  const titleFontWeight = boldText ? 600 : 400
+  const titleElement = (
+    <p
+      className="timer-title"
+      style={{ fontSize: `${titleFontSize}px`, fontFamily: selectedFont.family, fontWeight: titleFontWeight }}
+    >
+      {titleText}
+    </p>
+  )
+  const timerElement = (
+    <p
+      className={`timer-value ${shownRemainingSeconds < 0 ? 'timer-value--negative' : ''}`}
+      style={{ fontSize: `${timeFontSize}px`, fontFamily: selectedFont.family, fontWeight: timeFontWeight }}
+    >
+      {formatCountdown(shownRemainingSeconds)}
+    </p>
+  )
+  const controlsPanelStyle = {
+    '--controls-panel-scale': `${controlPanelScale / 100}`,
+  } as CSSProperties
 
   return (
     <div className="app-shell">
@@ -1025,7 +1138,7 @@ function App() {
           </div>
         </div>
       </aside>
-      <div className={`controls-panel controls-panel--${controlsAlign}`}>
+      <div className={`controls-panel controls-panel--${controlsAlign}`} style={controlsPanelStyle}>
         <label className="title-input-group">
           <span className="time-input-label">Title</span>
           <input
@@ -1069,7 +1182,7 @@ function App() {
             aria-label="Start timer"
             title="Start timer"
           >
-            ▶
+            <StartIcon />
           </button>
           <button
             className="control-button"
@@ -1079,7 +1192,7 @@ function App() {
             title={isRunning ? 'Pause timer' : 'Resume timer'}
             disabled={!isRunning && !isPaused}
           >
-            {isRunning ? '⏸' : <ResumeIcon />}
+            {isRunning ? <PauseIcon /> : <ResumeIcon />}
           </button>
           <button
             className="control-button"
@@ -1088,7 +1201,7 @@ function App() {
             aria-label="Stop timer"
             title="Stop timer"
           >
-            ⏹
+            <StopIcon />
           </button>
           <button
             className="control-button"
@@ -1098,7 +1211,7 @@ function App() {
             title="Load previous queue item"
             disabled={queueItems.length === 0}
           >
-            ⏮
+            <PreviousIcon />
           </button>
           <button
             className="control-button control-button--next"
@@ -1108,7 +1221,7 @@ function App() {
             title="Load next queue item"
             disabled={queueItems.length === 0}
           >
-            ⏭
+            <NextIcon />
           </button>
         </div>
         <div className="next-item-indicator" aria-live="polite">
@@ -1144,11 +1257,24 @@ function App() {
           <h2 className="config-title">Settings</h2>
 
           <label className="config-field">
+            <span className="config-label">Control Panel Size</span>
+            <input
+              type="range"
+              min={MIN_CONTROL_PANEL_SCALE}
+              max={MAX_CONTROL_PANEL_SCALE}
+              step="5"
+              value={controlPanelScale}
+              onChange={(event) => setControlPanelScale(Number(event.target.value))}
+            />
+            <span className="config-value">{controlPanelScale}%</span>
+          </label>
+
+          <label className="config-field">
             <span className="config-label">Time Font Size</span>
             <input
               type="range"
-              min="72"
-              max="320"
+              min={MIN_FONT_SIZE}
+              max={MAX_FONT_SIZE}
               step="2"
               value={timeFontSize}
               onChange={(event) => setTimeFontSize(Number(event.target.value))}
@@ -1167,12 +1293,26 @@ function App() {
             </select>
           </label>
 
+          <label className="config-field config-field--checkbox">
+            <input type="checkbox" checked={boldText} onChange={(event) => setBoldText(event.target.checked)} />
+            <span className="config-label">Bold</span>
+          </label>
+
+          <label className="config-field config-field--checkbox">
+            <input
+              type="checkbox"
+              checked={titleAboveTimer}
+              onChange={(event) => setTitleAboveTimer(event.target.checked)}
+            />
+            <span className="config-label">Title Above Timer</span>
+          </label>
+
           <label className="config-field">
             <span className="config-label">Title Font Size</span>
             <input
               type="range"
-              min="72"
-              max="320"
+              min={MIN_FONT_SIZE}
+              max={MAX_FONT_SIZE}
               step="2"
               value={titleFontSize}
               onChange={(event) => setTitleFontSize(Number(event.target.value))}
@@ -1283,15 +1423,8 @@ function App() {
             marginRight: `${contentMarginRight}px`,
           }}
         >
-          <p
-            className={`timer-value ${shownRemainingSeconds < 0 ? 'timer-value--negative' : ''}`}
-            style={{ fontSize: `${timeFontSize}px`, fontFamily: selectedFont.family }}
-          >
-            {formatCountdown(shownRemainingSeconds)}
-          </p>
-          <p className="timer-title" style={{ fontSize: `${titleFontSize}px`, fontFamily: selectedFont.family }}>
-            {titleText}
-          </p>
+          {titleAboveTimer ? titleElement : timerElement}
+          {titleAboveTimer ? timerElement : titleElement}
         </div>
       </main>
     </div>

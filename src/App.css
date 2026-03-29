@@ -25,6 +25,7 @@
 }
 
 .controls-panel {
+  --controls-panel-scale: 1;
   position: fixed;
   left: 50%;
   z-index: 10;
@@ -46,13 +47,15 @@
 .controls-panel--top {
   top: 1rem;
   bottom: auto;
-  transform: translateX(-50%);
+  transform: translateX(-50%) scale(var(--controls-panel-scale));
+  transform-origin: center top;
 }
 
 .controls-panel--bottom {
   top: auto;
   bottom: 1rem;
-  transform: translateX(-50%);
+  transform: translateX(-50%) scale(var(--controls-panel-scale));
+  transform-origin: center bottom;
 }
 
 .time-inputs {
@@ -614,6 +617,13 @@
   font-weight: 600;
   line-height: 1;
   cursor: pointer;
+}
+
+.control-button-icon {
+  width: 1.35rem;
+  height: 1.35rem;
+  display: block;
+  flex: none;
 }
 
 .control-button--next {
